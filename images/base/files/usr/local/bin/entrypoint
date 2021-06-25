@@ -266,6 +266,7 @@ fix_product_name() {
     echo 'INFO: faking /sys/class/dmi/id/product_name to be "kind"' >&2
     echo 'kind' > /kind/product_name
     mount -o ro,bind /kind/product_name /sys/class/dmi/id/product_name
+    jq '.mounts[.mounts | length] |= . + {"destination": "/sys/class/dmi/id/product_name", "source": "/kind/product_name", "options": ["ro", "bind"]}' /etc/containerd/cri-base.json > /tmp/cri-base.json && mv /tmp/cri-base.json /etc/containerd/cri-base.json
   fi
 }
 
