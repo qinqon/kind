@@ -112,6 +112,7 @@ RUN echo "Installing Packages ..." \
       libseccomp2 pigz \
       bash ca-certificates curl rsync \
       nfs-common fuse-overlayfs \
+      jq \
     && find /lib/systemd/system/sysinit.target.wants/ -name "systemd-tmpfiles-setup.service" -delete \
     && rm -f /lib/systemd/system/multi-user.target.wants/* \
     && rm -f /etc/systemd/system/*.wants/* \
@@ -142,6 +143,7 @@ RUN echo "Installing containerd ..." \
     && sha256sum --ignore-missing -c /tmp/runc.sha256 \
     && mv /tmp/runc.${TARGETARCH} /usr/local/sbin/runc \
     && chmod 755 /usr/local/sbin/runc \
+    && ctr oci spec > /etc/containerd/cri-base.json \
     && containerd --version \
     && runc --version \
     && systemctl enable containerd
