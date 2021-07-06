@@ -286,6 +286,7 @@ fix_product_uuid() {
   if [[ -f /sys/devices/virtual/dmi/id/product_uuid ]]; then
     echo 'INFO: faking /sys/devices/virtual/dmi/id/product_uuid as well' >&2
     mount -o ro,bind /kind/product_uuid /sys/devices/virtual/dmi/id/product_uuid
+    jq '.mounts[.mounts | length] |= . + {"destination": "/sys/devices/virtual/dmi/id/product_uuid", "source": "/kind/product_uuid", "options": ["ro", "bind"]}' /etc/containerd/cri-base.json > /tmp/cri-base.json && mv /tmp/cri-base.json /etc/containerd/cri-base.json
   fi
 }
 
