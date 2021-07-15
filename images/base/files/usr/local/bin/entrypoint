@@ -266,7 +266,6 @@ fix_product_name() {
     echo 'INFO: faking /sys/class/dmi/id/product_name to be "kind"' >&2
     echo 'kind' > /kind/product_name
     mount -o ro,bind /kind/product_name /sys/class/dmi/id/product_name
-    jq '.mounts[.mounts | length] |= . + {"destination": "/sys/class/dmi/id/product_name", "source": "/kind/product_name", "options": ["ro", "bind"]}' /etc/containerd/cri-base.json > /tmp/cri-base.json && mv /tmp/cri-base.json /etc/containerd/cri-base.json
   fi
 }
 
@@ -282,13 +281,16 @@ fix_product_uuid() {
   if [[ -f /sys/class/dmi/id/product_uuid ]]; then
     echo 'INFO: faking /sys/class/dmi/id/product_uuid to be random' >&2
     mount -o ro,bind /kind/product_uuid /sys/class/dmi/id/product_uuid
-    jq '.mounts[.mounts | length] |= . + {"destination": "/sys/class/dmi/id/product_uuid", "source": "/kind/product_uuid", "options": ["ro", "bind"]}' /etc/containerd/cri-base.json > /tmp/cri-base.json && mv /tmp/cri-base.json /etc/containerd/cri-base.json
   fi
   if [[ -f /sys/devices/virtual/dmi/id/product_uuid ]]; then
     echo 'INFO: faking /sys/devices/virtual/dmi/id/product_uuid as well' >&2
     mount -o ro,bind /kind/product_uuid /sys/devices/virtual/dmi/id/product_uuid
-    jq '.mounts[.mounts | length] |= . + {"destination": "/sys/devices/virtual/dmi/id/product_uuid", "source": "/kind/product_uuid", "options": ["ro", "bind"]}' /etc/containerd/cri-base.json > /tmp/cri-base.json && mv /tmp/cri-base.json /etc/containerd/cri-base.json
   fi
+}
+
+
+fix_containerd_product_files() {
+  jq '.hooks.createContainer[.hooks.createContainer| length] |= . + {"path": "/usr/local/bin/mount-product-files"}' /etc/containerd/cri-base.json > /tmp/cri-base.json && mv /tmp/cri-base.json /etc/containerd/cri-base.json
 }
 
 fix_kmsg() {
@@ -409,6 +411,7 @@ fix_cgroup
 fix_machine_id
 fix_product_name
 fix_product_uuid
+fix_containerd_product_files
 select_iptables
 enable_network_magic
 
