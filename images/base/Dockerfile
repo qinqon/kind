@@ -143,7 +143,6 @@ RUN echo "Installing containerd ..." \
     && sha256sum --ignore-missing -c /tmp/runc.sha256 \
     && mv /tmp/runc.${TARGETARCH} /usr/local/sbin/runc \
     && chmod 755 /usr/local/sbin/runc \
-    && ctr oci spec > /etc/containerd/cri-base.json \
     && containerd --version \
     && runc --version \
     && systemctl enable containerd

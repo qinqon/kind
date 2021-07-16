@@ -288,11 +288,6 @@ fix_product_uuid() {
   fi
 }
 
-
-fix_containerd_product_files() {
-  jq '.hooks.createContainer[.hooks.createContainer| length] |= . + {"path": "/usr/local/bin/mount-product-files"}' /etc/containerd/cri-base.json > /tmp/cri-base.json && mv /tmp/cri-base.json /etc/containerd/cri-base.json
-}
-
 fix_kmsg() {
   # In environments where /dev/kmsg is not available, the kubelet (1.15+) won't
   # start because it cannot open /dev/kmsg when starting the kmsgparser in the
@@ -411,7 +406,6 @@ fix_cgroup
 fix_machine_id
 fix_product_name
 fix_product_uuid
-fix_containerd_product_files
 select_iptables
 enable_network_magic
 
