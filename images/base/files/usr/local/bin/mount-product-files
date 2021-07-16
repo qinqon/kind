@@ -19,7 +19,7 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-bundle=$(jq -r .bundle)
+bundle=$(sed -r 's/.*,"bundle":"([/0-9a-z\.]*)",.*/\1/')
 cp /kind/product_* "$bundle/rootfs/"
 if [[ -f /sys/class/dmi/id/product_name ]]; then
   mount -o ro,bind "$bundle/rootfs/product_name" "$bundle/rootfs/sys/class/dmi/id/product_name"
